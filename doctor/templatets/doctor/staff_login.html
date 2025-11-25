@@ -1,0 +1,32 @@
+{% extends 'main.html' %}
+{% block content %}
+
+{% block title %}تسجيل الدخول{% endblock %}
+
+<!-- custom navbar for entry page before login -->
+<header class="topbar">
+    <div class="topbar__left"><div class="brand">عيادة الطبيب</div></div>
+    <div class="topbar__center"></div>
+    <div class="topbar__right"><a class="navlink" href="#">إنشاء حساب</a></div>
+</header>
+<!-- ----------------------------------------- -->
+
+<div class="auth-wrapper">
+    <div class="card auth-card">
+        <h1 style="margin-top:0;">تسجيل الدخول</h1>
+        <form style="display:grid; gap:16px;">
+            <div>
+                <label for="email">البريد الإلكتروني</label>
+                <input id="email" type="email" placeholder="example@mail.com" />
+            </div>
+            <div>
+                <label for="password">كلمة المرور</label>
+                <input id="password" type="password" placeholder="••••••••" />
+            </div>
+            <button type="submit" class="primary">دخول</button>
+            <p style="margin:0; color:var(--muted);">ليس لديك حساب؟ <a href="#">سجل الآن</a></p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

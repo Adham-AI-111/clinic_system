@@ -1,0 +1,57 @@
+{% extends 'main.html' %}
+{% block content %}
+
+{% block title %}بيانات المريض{% endblock %}
+
+
+<div class="layout">
+    <!-- TODO: disaply for staff only -->
+    {% include 'sidebar.html' %}
+    <!-- ---------------------------- -->
+
+    <main class="content">
+        <section class="section">
+            <!-- patient public data in user model -->
+            <div class="card">
+                <h1 style="margin:0 0 8px;">أحمد علي — 34 سنة</h1>
+                <p style="margin:0; color:var(--muted);">رقم الملف: 10234</p>
+            </div> 
+
+        <div class="card">
+            <h2 style="margin-top:0;">التشخيص</h2>
+            <p>التهاب حاد في الحلق — وصف علاج لمدة 7 أيام (اخر تشخيص).</p>
+        </div>
+
+        <!-- ? ----Label for the inside data---- -->
+        <div class="section-header-plain">
+            <h2 style="margin:0;">سجل المواعيد</h2>
+            <a href="new-appointment.html" class="btn" style="background:var(--primary); color:#fff; border-color:var(--primary);">موعد جديد</a>
+        </div>
+        <!-- ------------------------------------- -->
+
+        <div style="display:grid; gap:16px;">
+            <a class="card" href="appointment-detail.html" style="text-decoration:none; color:inherit; display:block;">
+                <div style="display:flex; justify-content:space-between; align-items:start; gap:16px;">
+                    <div style="flex:1;">
+                        <h3 style="margin:0 0 8px;">موعد ١ نوفمبر ٢٠٢٥</h3>
+                        <p style="margin:4px 0; color:var(--muted);">الوقت: 10:00 صباحًا • الرسوم: 160 ر.س</p>
+                        <p style="margin:4px 0 0; color:var(--muted);">ملاحظات: متابعة</p>
+                    </div>
+                    <span class="pill success">مكتمل</span>
+                </div>
+            </a>
+            <a class="card" href="appointment-detail.html" style="text-decoration:none; color:inherit; display:block;">
+                <div style="display:flex; justify-content:space-between; align-items:start; gap:16px;">
+                    <div style="flex:1;">
+                        <h3 style="margin:0 0 8px;">موعد ٢٠ أكتوبر ٢٠٢٥</h3>
+                        <p style="margin:4px 0; color:var(--muted);">الوقت: 12:30 ظهرًا • الرسوم: 180 ر.س</p>
+                        <p style="margin:4px 0 0; color:var(--muted);">ملاحظات: فحص دوري</p>
+                    </div>
+                    <span class="pill success">مكتمل</span>
+                </div>
+            </a>
+        </div>
+        </section>
+    </main>
+</div>
+{% endblcok %}

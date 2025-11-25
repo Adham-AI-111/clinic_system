@@ -1,0 +1,48 @@
+{% extends 'main.html' %}
+{% block content %}
+
+{% block title %}سجل المواعيد — نظام العيادة{% endblock %}
+
+<div class="layout">
+    {% include 'sidebar.html' %}
+
+    <main class="content">
+        <section class="section">
+            <!--? ----filter---- -->
+            <form class="card" style="display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
+                <div>
+                    <label>من</label>
+                    <input type="date" />
+                </div>
+                <div>
+                    <label>إلى</label>
+                    <input type="date" />
+                </div>
+                <button type="submit" class="pill muted">تصفية</button>
+            </form>
+
+            <div class="card" style="padding:0;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>المريض</th>
+                            <th>العمر</th>
+                            <th>الحالة</th>
+                            <th>الرسوم</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>أحمد علي</td><td>34</td><td><span class="pill success">مكتمل</span></td><td>180 ر.س</td><td>2025-11-06</td>
+                        </tr>
+                        <tr>
+                            <td>سارة محمد</td><td>28</td><td><span class="pill warning">مؤجل</span></td><td>150 ر.س</td><td>2025-11-06</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}

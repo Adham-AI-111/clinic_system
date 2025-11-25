@@ -1,0 +1,56 @@
+{% extends 'main.html' %}
+{% block content %}
+
+{% block title %}تفاصيل الموعد{% endblock %}
+
+
+<div class="layout">
+    <!-- TODO: display for staff only -->
+    {% include 'sidebar.html' %}
+    <!-- ---------------------------- -->
+
+    <main class="content">
+        <section class="section">
+            <!--? public appointment data -->
+            <div class="card">
+                <h1 style="margin:0 0 8px;">موعد — أحمد علي</h1>
+                <p style="margin:0; color:var(--muted);">١ نوفمبر ٢٠٢٥ • 10:00 صباحًا • الرسوم: 160 ر.س</p>
+            </div>
+            <!-- ----------------------- -->
+
+
+            <!--? the diagonsis -->
+            <div class="card">
+                <h2 style="margin-top:0;">التشخيص</h2>
+                <p>التهاب حاد في الحلق مع احمرار في اللوزتين. ارتفاع طفيف في درجة الحرارة. الأعراض بدأت منذ يومين.</p>
+            </div>
+            <!-- -------------- -->
+
+            <!-- ? the prescription -->
+            <div class="card">
+                <h2 style="margin-top:0;">الوصفة الطبية</h2>
+                <ul style="margin:0; padding:0 20px;">
+                    <li>أموكسيسيلين 500 مجم — حبة كل 8 ساعات لمدة 7 أيام</li>
+                    <li>باراسيتامول 500 مجم — حبتان عند الحاجة للألم أو الحمى</li>
+                    <li>غرغرة ماء مالح — 3 مرات يوميًا</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2 style="margin-top:0;">المتطلبات</h2>
+                <ul style="margin:0; padding:0 20px;">
+                    <li>الراحة التامة لمدة يومين</li>
+                    <li>شرب السوائل الدافئة بكثرة</li>
+                    <li>تجنب الأطعمة الحارة والباردة</li>
+                    <li>متابعة بعد أسبوع إذا لم تتحسن الأعراض</li>
+                </ul>
+            </div>
+            <!-- ------------------ -->
+
+            <div style="display:flex; gap:12px;">
+                <a href="patient-detail.html" class="btn">العودة إلى المريض</a>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblcok %}
