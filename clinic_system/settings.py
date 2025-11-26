@@ -21,6 +21,7 @@ ALLOWED_HOSTS = ['.127.0.0.1', '.localhost']
 SHARED_APPS = [
     'django_tenants',
     'doctor',
+
     'django.contrib.contenttypes',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'clinic_system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'temapltes'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

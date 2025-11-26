@@ -1,3 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from .forms import ReceptionSignupForm
+from doctor.permissions import doctor_required
 
-# Create your views here.
+def reception_signup(request):
+    if request.method == 'POST':
+        form = ReceptionSignupForm(request.POST, request=request)
+        if form.is_valid():
+            form.save()
+            redirect('dashboard')
+    else:
+        form = ReceptionSignupForm(request=request)
+    context = {'form':form}
+    return render(request, 'add_reception.html', context)
+
