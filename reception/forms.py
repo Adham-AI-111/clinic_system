@@ -21,21 +21,23 @@ class ReceptionSignupForm(UserSignupForm):
         #!  "combinaton fields here"  Merge fields into this form
         self.fields.update(self.reception_form.fields)
         
-        def is_valid(self):
-            return super().is_valid() and self.reception_form.is_valid()
+    def is_valid(self):
+        return super().is_valid() and self.reception_form.is_valid()
 
-        def save(self, commit=True):
-            if not self.request:
-                raise ValueError("Request must be passed to ReceptionSignupForm")
+    def save(self, commit=True):
+        if not self.request:
+            raise ValueError("Request must be passed to ReceptionSignupForm")
 
-            # save user directly by commit=true, beacuse no more actions we want to do on user model
-            # if not saved the teacher will not created, because the relation will faild
-            user = super().save(commit=commit)
-
-            if commit:
-                # set the relations
-                reception = self.reception_form.save(commit=False)
-                reception.user = user
-                reception.doctor = self.request.tenant
-                reception.save()
-            return user
+        # save user directly by commit=true, beacuse no more actions we want to do on user model
+        # if not saved the teacher will not created, because the relation will faild
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])  # Hash the password
+        if commit:
+            user.save()
+    
+        # set the relations
+        reception = self.reception_form.save(commit=False) # this work on Reception model through the ModelForm
+        reception.user = user
+        reception.doctor = self.request.tenant
+        reception.save()
+        return user

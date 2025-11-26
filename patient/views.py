@@ -7,10 +7,13 @@ from doctor.permissions import staff_required
 # @staff_required
 def signup_patient(request):
     if request.method == 'POST':
-        form = PatientSignupForm(request.POT, request=request)
+        form = PatientSignupForm(request.POST, request=request)
         if form.is_valid():
+            print('form is valid')
             form.save()
-            return redirect('home')
+            return redirect('dashboard')
+        else:
+            print(form.errors)
     else:
         form = PatientSignupForm(request=request)
 

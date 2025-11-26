@@ -27,29 +27,29 @@ class PatientSignupForm(UserSignupForm):
         super().__init__(*args, **kwargs)
 
         # create PatientProfileForm instance to use its fields
-        self.patient_form = PatientProfileForm(data=self.data if self.is_bound else None,
-            prefix='patient')
+        self.patient_form = PatientProfileForm(data=self.data if self.is_bound else None)
 
         #!  "combinaton fields here"  Merge fields into this form
         self.fields.update(self.patient_form.fields)
 
-        def is_valid(self):
-            return super().is_valid() and self.patient_form.is_valid()
+    def is_valid(self):
+        return super().is_valid() and self.patient_form.is_valid()
 
-        def save(self, commit=True):
-            if not self.request:
-                raise ValueError("Request must be passed to PatientSignupForm")
+    def save(self, commit=True):
+        if not self.request:
+            raise ValueError("Request must be passed to PatientSignupForm")
 
-            # save user directly by commit=true, beacuse no more actions we want to do on user model
-            # if not saved the teacher will not created, because the relation will faild
-            user = super().save(commit=commit)
+        # save user directly by commit=true, beacuse no more actions we want to do on user model
+        # if not saved the teacher will not created, because the relation will faild
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])  # Hash the password
+        if commit: # the default commit
+            user.save()
 
-            if commit:
-                # set the relations
-                patient = self.patient_form.save(commit=False)
-                patient.user = user
-                patient.doctor = self.request.tenant
-                patient.save()
-
-            # TODO: how commit work in view in this case, if type commit=false in view
-            return user
+        # set the relations
+        patient = self.patient_form.save(commit=False)
+        patient.user = user
+        patient.doctor = self.request.tenant
+        patient.save()
+        # TODO: how commit work in view in this case, if type commit=false in view
+        return user
