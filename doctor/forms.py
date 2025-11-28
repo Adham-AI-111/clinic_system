@@ -9,8 +9,7 @@ class UserSignupForm(forms.ModelForm):
         fields = ['username', 'phone', 'role', 'password',]
         widgets = {
             # ? use widgets to control HTML behavior
-            # 'phone': forms.TextInput(attrs={'type': 'tel'}),
-            # 'role': forms.Select(attrs={'type': 'text'})
+            # 'role': forms.Select(attrs={'disabled': True})
         }
 
     def __init__(self, *args, **kwargs):

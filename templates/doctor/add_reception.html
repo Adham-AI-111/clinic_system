@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
+{% block title %}عامل جديد{% endblock %}
 {% block content %}
 
-{% block title %}عامل جديد{% endblock %}
 
 
 <div class="layout">
@@ -27,7 +27,7 @@
 
                 <div style="display:flex; gap:12px;">
                     <button type="submit" class="primary">حفظ العامل</button>
-                    <a href="index .html" class="btn">إلغاء</a>
+                    <a href="{% url 'dashboard' %}" class="btn">إلغاء</a>
                 </div>
             </form>
         </section>

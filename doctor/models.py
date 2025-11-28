@@ -64,7 +64,10 @@ class User(AbstractUser):
     role = models.CharField(max_length=12, choices=ROLE_CHOICES, default='patient')
     # one source phone field to use it in authentication
     phone = PhoneNumberField(region="EG", unique=True)  # add region="EG" 
-    # username = None
+    # to secure login logic
+    failed_login_attempts = models.IntegerField(default=0)
+    last_login_attempt = models.DateTimeField(null=True, blank=True)
+    account_locked_until = models.DateTimeField(null=True, blank=True)
 
     USERNAME_FIELD = 'username' # when register a superuser
     REQUIRED_FIELDS = ['phone']
@@ -73,6 +76,19 @@ class User(AbstractUser):
     
     def __str__(self):
         return self.username
+
+    @property
+    def is_staff_member(self):
+        """Check if user is staff (doctor or reception)"""
+        return self.role in ['doctor', 'reception', 'admin']
+    
+    @property
+    def is_locked(self):
+        """Check if account is currently locked"""
+        from django.utils import timezone
+        if self.account_locked_until:
+            return timezone.now() < self.account_locked_until
+        return False
 
 
 class Doctor(TenantMixin):

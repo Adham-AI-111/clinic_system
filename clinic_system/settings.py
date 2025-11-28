@@ -96,6 +96,30 @@ TENANT_MODEL = "doctor.Doctor" # app.Model
 
 TENANT_DOMAIN_MODEL = "doctor.Domain"  # app.Model
 
+# custom backent for login
+AUTHENTICATION_BACKENDS = [
+    'doctor.backends.StaffAuthBackend',      # For staff (doctors, reception)
+    'doctor.backends.PatientAuthBackend',    # For patients
+    'django.contrib.auth.backends.ModelBackend',  # Fallback
+]
+
+# to display looger messages in terminal
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'doctors': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#         },
+#     },
+# }
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

@@ -1,0 +1,15 @@
+<!-- here where we manage the user role and login -->
+ {% extends 'main.html' %}
+ {% block content %}
+
+<div class="card">
+    who you are
+    <div>
+        <a href="{% url 'staff-login' %}">I am a staff</a>
+    </div>
+    <div>
+        <a href="{% url 'patient-login' %}">I am a patient</a>
+    </div>
+</div>
+
+ {% endblock %}

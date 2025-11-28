@@ -1,6 +1,6 @@
 <header class="topbar">
     <div class="topbar__left">
-        <div class="brand">عيادة الطبيب</div>
+        <div class="brand"> {{request.tenant}} عيادة الطبيب</div>
     </div>
     <div class="topbar__center">
         <form class="search">
@@ -9,5 +9,7 @@
     </div>
     <div class="topbar__right">
         <span class="today" aria-label="تاريخ اليوم">الخميس، ٦ نوفمبر ٢٠٢٥</span>
+        <a class="brand" href="{% url 'staff-logout' %}">logout</a>
     </div>
+    
 </header>

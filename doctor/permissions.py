@@ -12,10 +12,11 @@ def staff_required(view_func):
         # Check if user is authenticated
         if not request.user.is_authenticated:
             return redirect('login')
-        
+
         # Check if user has manager role
         # if request.user.role != 'Doctor' and request.user.role != 'Reception':
-        if request.user.role not in ['Doctor', 'Reception']:
+        # if request.user.role not in ['doctor', 'reception']:
+        if not (hasattr(request.user, 'doctor') or hasattr(request.user, 'reception')):
             raise PermissionDenied("staff access required")
         
         # If all checks pass, call the original view
@@ -37,8 +38,7 @@ def doctor_required(view_func):
             return redirect('login')
         
         # Check if user has manager role
-        # if request.user.role != 'Doctor' and request.user.role != 'Reception':
-        if request.user.role != 'Doctor':
+        if not hasattr(request.user, 'doctor'):
             raise PermissionDenied("doctor access required")
         
         # If all checks pass, call the original view

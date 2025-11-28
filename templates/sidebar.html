@@ -1,12 +1,15 @@
 <aside class="sidebar">
     <nav>
         <a class="navlink is-active" href="#">الرئيسية</a>
-        <a class="navlink" href="#">سجل المواعيد</a>
-        <a class="navlink" href="#">المرضى</a>
+        <a class="navlink" href="{% url 'appointments-dash' %}">سجل المواعيد</a>
+        <a class="navlink" href="{% url 'patients-dash' %}">المرضى</a>
         <a class="navlink" href="#">المالية</a>
         <a class="navlink" href="#">موعد جديد</a>
         <a class="navlink" href="{% url 'patient-signup' %}">مريض جديد</a>
         <!-- will be added to the management page later -->
+        {% if request.user.role == 'Doctor' %}
+         <!-- display for doctors only -->
         <a class="navlink" href="{% url 'reception-signup' %}">عامل جديد</a>
+        {% endif %}
     </nav>
 </aside>

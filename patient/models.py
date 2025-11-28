@@ -17,12 +17,21 @@ class Patient(models.Model):
 class Appointment(models.Model):
     APPOINT_STATUS = [('Completed', 'Completed'), ('Pending', 'Pending'), ('Canceled', 'Canceled')]
     # i will use this field to handle the appointments date operation like order matter in home page
-    created_at = models.DateTimeField(auto_now_add=True)
-    # date = models.DateField()
-    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    date = models.DateField()
+    cost = models.DecimalField(
+    max_digits=8,
+    decimal_places=2,
+    validators=[MinValueValidator(0)]
+    )
+    prior_cost = models.DecimalField(
+    max_digits=8,
+    decimal_places=2,
+    validators=[MinValueValidator(0)]
+    )
     status = models.CharField(max_length=12, choices=APPOINT_STATUS, default='Pending')
     is_prior = models.BooleanField(default=False)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments')
+    created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
         ordering = ['-created_at'] # the newest first
      
