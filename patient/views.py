@@ -7,7 +7,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from doctor.models import Domain
-from doctor.permissions import staff_required
+from common.permissions import staff_required
 from .forms import PatientSignupForm
 
 

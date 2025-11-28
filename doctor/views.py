@@ -8,7 +8,7 @@ import logging
 from django.db.models import F
 from .models import User, Doctor
 from patient.models import Patient, Appointment
-from doctor.permissions import staff_required
+from common.permissions import staff_required
 from .models import Domain
 
 logger = logging.getLogger(__name__)
