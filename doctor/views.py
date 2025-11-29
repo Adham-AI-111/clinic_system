@@ -1,15 +1,14 @@
-from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from datetime import timedelta
 import logging
 from django.db.models import F
-from .models import User, Doctor
+from .models import User, Doctor, Domain
 from patient.models import Patient, Appointment
 from common.permissions import staff_required
-from .models import Domain
 
 logger = logging.getLogger(__name__)
 
@@ -115,9 +114,11 @@ def home(request):
         return redirect('dashboard')
     return render(request, 'doctor/home.html')
 
+
 @staff_required
 def dashboard(request):
     return render(request, 'doctor/dashboard.html')
+
 
 def patients_dash(request):
     # we quesry every instance in patient model with its related data in user model
@@ -125,6 +126,7 @@ def patients_dash(request):
     
     context = {'patients':patients}
     return render(request, 'doctor/patients.html', context)
+
 
 def appointments_dash(request):
     '''

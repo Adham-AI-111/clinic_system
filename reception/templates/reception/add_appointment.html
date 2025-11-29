@@ -8,44 +8,22 @@
 
     <main class="content">
         <section class="section">
-            <h2>إضافة موعد جديد</h2>
+            <h2>إضافة موعد جديد للمستخدم {{user.username}}</h2>
             <form class="card" style="display:grid; gap:16px; max-width:720px;">
                 <div style="display:grid; gap:12px; grid-template-columns:1fr 1fr;">
-                    
+                    {% for field in form %}
                     <div>
-                        <label for="patient_age">رقم المريض</label>
-                        <input id="patient_age" type="number" min="0" placeholder="34" />
+                        <label>{{ field.label }}</label>
+                        {{field}}
                     </div>
-                    <div>
-                        <!-- auto fill by apointment cost -->
-                        <label for="fee">الرسوم</label>
-                        <input id="fee" type="number" min="0" step="1" placeholder="180" />
-                    </div>
-                    <div>
-                        <label for="status">الحالة</label>
-                        <select id="status" style="padding:10px 12px; border:1px solid var(--border); border-radius:10px; min-width:240px; background:#fff;">
-                            <option value="scheduled">مجدول</option>
-                            <option value="completed">مكتمل</option>
-                            <option value="delayed">مؤجل</option>
-                        </select>
-                    </div>
-                    <div>
-                        <!--TODO: auto fill by today date -->
-                        <label for="date">التاريخ</label>
-                        <input id="date" type="date" value="2025-11-06" />
-                    </div>
-                    
+                    {% endfor %}
                 </div>
-                <div>
-                    <label for="notes">ملاحظات</label>
-                    <input id="notes" type="text" placeholder="ملاحظة عن الحالة أو المطلوب" />
-                </div>
+                
                 <div style="display:flex; gap:12px;">
                     <button type="submit" class="primary">حفظ الموعد</button>
-                    <a href="index .html" class="btn">إلغاء</a>
+                    <a href="{% url 'patient-profile' user.id %}" class="btn">إلغاء</a>
                 </div>
             </form>
-            <p style="color:var(--muted); margin:8px 0 0; max-width:720px;">سيتم ضبط التاريخ تلقائيًا عبر النظام لاحقًا.</p>
         </section>
     </main>
 </div>

@@ -1,13 +1,16 @@
 from datetime import timedelta
 import logging
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
-from doctor.models import Domain
+
 from common.permissions import staff_required
+from doctor.models import Domain
+
 from .forms import PatientSignupForm
 
 
@@ -115,4 +118,5 @@ def patient_profile(request, pk):
     '''
     the single user appointments
     '''
-    return render(request, 'patient/patient_profile.html')
+    context = {'user_id':pk}
+    return render(request, 'patient/patient_profile.html', context)

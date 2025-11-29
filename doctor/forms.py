@@ -9,7 +9,7 @@ class UserSignupForm(forms.ModelForm):
         fields = ['username', 'phone', 'role', 'password',]
         widgets = {
             # ? use widgets to control HTML behavior
-            # 'role': forms.Select(attrs={'disabled': True})
+            'role': forms.Select(attrs={'class':'choice-box'})
         }
 
     def __init__(self, *args, **kwargs):

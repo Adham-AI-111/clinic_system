@@ -25,7 +25,8 @@
         <!-- ? ----Label for the inside data---- -->
         <div class="section-header-plain">
             <h2 style="margin:0;">سجل المواعيد</h2>
-            <a href="new-appointment.html" class="btn" style="background:var(--primary); color:#fff; border-color:var(--primary);">موعد جديد</a>
+            <!-- ! i passed the patient id from the patient profile page to this page using "context" in the profile view __in patient app -->
+            <a href="{% url 'create-appointment' user_id %}" class="btn" style="background:var(--primary); color:#fff; border-color:var(--primary);">موعد جديد</a>
         </div>
         <!-- ------------------------------------- -->
 

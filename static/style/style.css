@@ -99,6 +99,8 @@ img { max-width: 100%; height: auto; display: block; }
 	border-radius: var(--radius);
 	box-shadow: var(--shadow-1);
 	padding: var(--space-4);
+
+	position: relative; /* needed for absolute positioning inside */
 }
 
 .section-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
@@ -134,17 +136,22 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* fields labels theme */
 form label { display:block; font-size: 15px; color: var(--muted); margin-bottom: 4px; }
+
 /* the fields that inclde to those types, applyed on them the current style */
 input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="number"], input[type="tel"] {
 	padding: 10px 12px; border:1px solid var(--border); border-radius: 10px; min-width: 240px; outline: none; background: #fff;
 }
+
 button, .btn {
 	padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: #eef6ff; color: #1c4669; cursor: pointer;
 }
+
 button.primary { background: var(--primary); color:#fff; border-color: var(--primary); }
+
 button.primary:hover { background: var(--primary-600); }
 
 .auth-wrapper { min-height: calc(100vh - 120px); display:flex; align-items:center; justify-content:center; padding: var(--space-5) var(--space-4); }
+
 .auth-card { width: 100%; max-width: 480px; }
 
 @media (max-width: 900px) {
@@ -156,4 +163,39 @@ button.primary:hover { background: var(--primary-600); }
 	.topbar { grid-template-columns: 1fr; }
 }
 
+.choice-box {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    min-width: 240px;
+    background: #fff;
+}
 
+
+/* card link btn fro using it in patient card to create new aapointment */
+.card .card-link-btn {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #e6edf2;  /* modern primary color */
+	color: #1f6cac;       /* text color */
+	font-weight: bold;
+	font-size: 1.2rem;
+	border-radius: 50%;
+	text-decoration: none;
+	border: none;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.15); /* subtle shadow */
+	transition: all 0.2s ease-in-out;
+}
+
+.card .card-link-btn:hover {
+	background: #1f6cac;   /* darker shade on hover */
+	color: #fff;           /* text turns white to stay visible */
+	transform: scale(1.15); 
+	box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}

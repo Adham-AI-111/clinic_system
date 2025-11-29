@@ -95,6 +95,8 @@ class Doctor(TenantMixin):
     #TODO: user username field from main User model
     # name = models.CharField(max_length=30)
     major = models.CharField(max_length=50)
+    default_cost = models.IntegerField()
+    default_prior_cost = models.IntegerField()
     addresses = models.CharField(max_length=150)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

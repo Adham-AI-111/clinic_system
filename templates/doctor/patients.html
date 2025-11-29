@@ -10,13 +10,17 @@
         <section class="section">
             <h2>المرضى</h2>
             <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px;">
+                
                 {% for patient in patients %}
-                <a class="card" href="{% url 'patient-profile' patient.user.id %}" style="text-decoration:none; color:inherit;">
-                    <h3 style="margin:0;">{{ patient.user.username }}</h3>
-                    <p style="margin:6px 0; color:var(--muted);">العمر {{ patient.age }} • آخر تشخيص: {% if patient.diagnosis %}{{patient.diagnosis}}{% else %}لا يوجد{% endif %}</p>
-                    <!-- TODO: add the next apppintment data -->
-                    <span class="pill muted">الموعد التالي: اليوم 3:00 م</span>
-                </a>
+                <div class="card" >
+                    <a href="{% url 'patient-profile' patient.user.id %}" style="text-decoration:none; color:inherit;">
+                        <h3 style="margin:0;">{{ patient.user.username }}</h3>
+                        <p style="margin:6px 0; color:var(--muted);">العمر {{ patient.age }} • آخر تشخيص: {% if patient.diagnosis %}{{patient.diagnosis}}{% else %}لا يوجد{% endif %}</p>
+                        <!-- TODO: add the next apppintment data -->
+                        <span class="pill muted">الموعد التالي: اليوم 3:00 م</span>
+                    </a>
+                    <a href="{% url 'create-appointment' patient.user.id %}" class="card-link-btn">+</a>
+                </div>
                 {% endfor %}
                 <!-- <a class="card" href="patient-detail.html" style="text-decoration:none; color:inherit;">
                     <h3 style="margin:0;">سارة محمد</h3>
@@ -32,4 +36,152 @@
         </section>
     </main>
 </div>
+<!-- Appointment modal (hidden until requested) -->
+<div id="appointment-modal" aria-hidden="true" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:1200;">
+    <div role="dialog" aria-modal="true" style="background:var(--bg, #fff); max-width:720px; width:calc(100% - 40px); border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,0.25); padding:18px; position:relative;">
+        <button id="appointment-modal-close" aria-label="Close" style="position:absolute; top:10px; right:12px; border:none; background:none; font-size:20px; cursor:pointer;">×</button>
+        <div id="appointment-modal-body" style="display:block;">
+            <!-- form will be injected here -->
+            <div style="padding:24px; text-align:center; color:var(--muted);">جارٍ التحميل…</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Open create-appointment page and inject the form into the modal
+(function(){
+    const modal = document.getElementById('appointment-modal');
+    const body = document.getElementById('appointment-modal-body');
+    const closeBtn = document.getElementById('appointment-modal-close');
+
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Sanitize HTML: remove scripts and on* event handlers
+    function sanitizeElement(element) {
+        // Remove all script tags
+        const scripts = element.querySelectorAll('script');
+        scripts.forEach(script => script.remove());
+
+        // Remove all on* event handler attributes
+        element.querySelectorAll('*').forEach(el => {
+            Array.from(el.attributes).forEach(attr => {
+                if (attr.name.startsWith('on')) {
+                    el.removeAttribute(attr.name);
+                }
+            });
+        });
+
+        return element;
+    }
+
+    function showModal(){
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden','false');
+    }
+    function hideModal(){
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden','true');
+        // clear injected content after a short delay to avoid flicker on very fast requests
+        setTimeout(()=>{ body.textContent = ''; }, 150);
+    }
+
+    // close handlers
+    closeBtn.addEventListener('click', hideModal);
+    modal.addEventListener('click', function(e){ if(e.target === modal) hideModal(); });
+
+    document.addEventListener('click', function(e){
+        const el = e.target.closest && e.target.closest('.card-link-btn');
+        if(!el) return;
+        e.preventDefault();
+        const url = el.href;
+        if(!url) return;
+        showModal();
+
+        // Prepare fetch headers with CSRF token
+        const csrftoken = getCookie('csrftoken');
+        const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+        if (csrftoken) {
+            headers['X-CSRFToken'] = csrftoken;
+        }
+
+        // fetch the page and extract the full content (heading + form)
+        fetch(url, { 
+            method: 'GET',
+            headers: headers,
+            credentials: 'same-origin'
+        })
+            .then(res => {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.text();
+            })
+            .then(html => {
+                try{
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    // Extract the main section which contains the heading and form
+                    const section = doc.querySelector('section.section');
+                    if(!section){
+                        const errorDiv = document.createElement('div');
+                        errorDiv.style.cssText = 'padding:24px; text-align:center; color:var(--muted);';
+                        errorDiv.textContent = 'تعذر تحميل نموذج الموعد.';
+                        body.textContent = '';
+                        body.appendChild(errorDiv);
+                        return;
+                    }
+
+                    // Import the entire section into current document
+                    const imported = document.importNode(section, true);
+                    // Sanitize: remove scripts and event handlers
+                    sanitizeElement(imported);
+
+                    body.textContent = '';
+                    body.appendChild(imported);
+
+                    // Attach submit handler to hide modal immediately on submit (then let browser follow redirect)
+                    const form = body.querySelector('form');
+                    if(form){
+                        form.addEventListener('submit', function(){ hideModal(); }, { once: true });
+                    }
+
+                    // If the injected form had a cancel link containing 'إلغاء', make it close modal instead of navigating
+                    const cancelLinks = body.querySelectorAll('a');
+                    cancelLinks.forEach(a=>{
+                        if(a.getAttribute('href') && a.textContent.trim().toLowerCase().includes('إلغاء')){
+                            a.addEventListener('click', function(ev){ ev.preventDefault(); hideModal(); });
+                        }
+                    });
+                }catch(err){
+                    console.error('Modal load error:', err);
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'padding:24px; text-align:center; color:var(--muted);';
+                    errorDiv.textContent = 'حدث خطأ أثناء تحميل النموذج.';
+                    body.textContent = '';
+                    body.appendChild(errorDiv);
+                }
+            })
+            .catch(err => {
+                console.error('Fetch error:', err);
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'padding:24px; text-align:center; color:var(--muted);';
+                errorDiv.textContent = 'تعذر الاتصال بالخادم.';
+                body.textContent = '';
+                body.appendChild(errorDiv);
+            });
+    });
+})();
+</script>
 {% endblock %}
