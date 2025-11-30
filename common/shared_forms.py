@@ -6,7 +6,7 @@ from patient.models import Appointment
 class CreateAppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['date', 'cost', 'prior_cost', 'status', 'is_prior']
+        fields = ['date', 'status', 'is_prior']
         widgets = {
             'date': forms.DateInput(attrs={'type':'date'}),
             'status': forms.Select(attrs={'class':'choice-box'}),

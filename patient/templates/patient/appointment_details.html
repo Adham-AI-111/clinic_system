@@ -2,8 +2,6 @@
 {% block title %}تفاصيل الموعد{% endblock %}
 {% block content %}
 
-
-
 <div class="layout">
     <!-- TODO: display for staff only -->
     {% include 'sidebar.html' %}
@@ -18,7 +16,6 @@
             </div>
             <!-- ----------------------- -->
 
-
             <!--? the diagonsis -->
             <div class="card">
                 <h2 style="margin-top:0;">التشخيص</h2>
@@ -26,7 +23,7 @@
             </div>
             <!-- -------------- -->
 
-            <!-- ? the prescription -->
+            <!--? the prescription -->
             <div class="card">
                 <h2 style="margin-top:0;">الوصفة الطبية</h2>
                 <ul style="margin:0; padding:0 20px;">
@@ -35,7 +32,8 @@
                     <li>غرغرة ماء مالح — 3 مرات يوميًا</li>
                 </ul>
             </div>
-            
+
+            <!--? advices -->
             <div class="card">
                 <h2 style="margin-top:0;">المتطلبات</h2>
                 <ul style="margin:0; padding:0 20px;">
@@ -53,4 +51,4 @@
         </section>
     </main>
 </div>
-{% endblcok %}
+{% endblock %}

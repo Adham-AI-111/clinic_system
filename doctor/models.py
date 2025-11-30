@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from django_tenants.models import TenantMixin, DomainMixin
 from django.utils.crypto import get_random_string
+from django.core.exceptions import ValidationError
+
 
 class UserManager(BaseUserManager):
     def create_user(self, username, phone, password=None, role='patient', **extra_fields):
@@ -77,6 +79,10 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def clean(self):
+        if self.phone is not self.phone.isdigit():
+            raise ValidationError('لا يسمح بغير الارقام في خانة الهاتف')
+
     @property
     def is_staff_member(self):
         """Check if user is staff (doctor or reception)"""
@@ -93,7 +99,6 @@ class User(AbstractUser):
 
 class Doctor(TenantMixin):
     #TODO: user username field from main User model
-    # name = models.CharField(max_length=30)
     major = models.CharField(max_length=50)
     default_cost = models.IntegerField()
     default_prior_cost = models.IntegerField()

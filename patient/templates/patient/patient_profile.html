@@ -2,7 +2,10 @@
 {% block title %}بيانات المريض{% endblock %}
 {% block content %}
 
-
+<!-- 
+    will get -> user id to filter his data
+    will pass to view -> appointment id to open each appointment page
+-->
 
 <div class="layout">
     <!-- TODO: disaply for staff only -->
@@ -13,8 +16,8 @@
         <section class="section">
             <!-- patient public data in user model -->
             <div class="card">
-                <h1 style="margin:0 0 8px;">أحمد علي — 34 سنة</h1>
-                <p style="margin:0; color:var(--muted);">رقم الملف: 10234</p>
+                <h1 style="margin:0 0 8px;">{{ patient.user.username }} - {{ patient.age }} </h1>
+                <p style="margin:0; color:var(--muted);">رقم الملف: {{ patient.id }}</p>
             </div> 
 
         <div class="card">
@@ -31,26 +34,19 @@
         <!-- ------------------------------------- -->
 
         <div style="display:grid; gap:16px;">
-            <a class="card" href="appointment-detail.html" style="text-decoration:none; color:inherit; display:block;">
+            {% for appoint in appointments %}
+            <!-- user_id was passed in context of patient profile as a user model instance id -->
+            <a class="card" href="{% url 'appointment-details' appoint.id user_id %}" style="text-decoration:none; color:inherit; display:block;">
                 <div style="display:flex; justify-content:space-between; align-items:start; gap:16px;">
                     <div style="flex:1;">
-                        <h3 style="margin:0 0 8px;">موعد ١ نوفمبر ٢٠٢٥</h3>
-                        <p style="margin:4px 0; color:var(--muted);">الوقت: 10:00 صباحًا • الرسوم: 160 ر.س</p>
-                        <p style="margin:4px 0 0; color:var(--muted);">ملاحظات: متابعة</p>
+                        <h3 style="margin:0 0 8px;">موعد  {{ appoint.date|date:"j-n-y" }}</h3>
+                        <p style="margin:4px 0; color:var(--muted);">• الرسوم: {{appoint.cost}} ج.م</p>
+                        <!-- <p style="margin:4px 0 0; color:var(--muted);">ملاحظات: متابعة</p> -->
                     </div>
-                    <span class="pill success">مكتمل</span>
+                    <span class="pill success">{{appoint.status}}</span>
                 </div>
             </a>
-            <a class="card" href="appointment-detail.html" style="text-decoration:none; color:inherit; display:block;">
-                <div style="display:flex; justify-content:space-between; align-items:start; gap:16px;">
-                    <div style="flex:1;">
-                        <h3 style="margin:0 0 8px;">موعد ٢٠ أكتوبر ٢٠٢٥</h3>
-                        <p style="margin:4px 0; color:var(--muted);">الوقت: 12:30 ظهرًا • الرسوم: 180 ر.س</p>
-                        <p style="margin:4px 0 0; color:var(--muted);">ملاحظات: فحص دوري</p>
-                    </div>
-                    <span class="pill success">مكتمل</span>
-                </div>
-            </a>
+            {% endfor %}
         </div>
         </section>
     </main>

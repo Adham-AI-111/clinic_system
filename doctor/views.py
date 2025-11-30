@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from datetime import timedelta
 import logging
-from django.db.models import F
+from django.db.models import F, Q
 from .models import User, Doctor, Domain
 from patient.models import Patient, Appointment
 from common.permissions import staff_required
@@ -112,22 +112,37 @@ def home(request):
     '''
     if request.user.is_authenticated and request.user.is_staff_member:
         return redirect('dashboard')
+    if request.user.is_authenticated and not request.user.is_staff_member:
+        return redirect('patient-profile', user_id=request.user.id)
+
+
     return render(request, 'doctor/home.html')
 
 
 @staff_required
 def dashboard(request):
-    return render(request, 'doctor/dashboard.html')
+    today = timezone.now().date()
+    context = {'today':today}
+    return render(request, 'doctor/dashboard.html', context)
 
 
+@staff_required
 def patients_dash(request):
-    # we quesry every instance in patient model with its related data in user model
+    # I query every instance in patient model with its related data in user model
     patients = Patient.objects.select_related('user').all()
-    
+
+    q = request.GET.get('q')
+    q_value = Q()
+    if q:
+        # TODO: add ability to search by ids
+        q_value = Q(user__username__icontains=q) | Q(user__phone__contains=q)
+    patients = patients.filter(q_value)
+
     context = {'patients':patients}
     return render(request, 'doctor/patients.html', context)
 
 
+@staff_required
 def appointments_dash(request):
     '''
     all appointments for the current doctor are on the system

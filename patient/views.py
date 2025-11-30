@@ -3,14 +3,14 @@ import logging
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from django.http import Http404
 
-from common.permissions import staff_required
-from doctor.models import Domain
-
+from common.permissions import staff_required, user_owns_profile
+from doctor.models import Domain, User
+from .models import Appointment, Patient
 from .forms import PatientSignupForm
 
 
@@ -79,11 +79,12 @@ def patient_login(request):
                 ).first()
 
                 if domain:
-                    return redirect(f"http://{domain.domain}/")
+                    return redirect(f"http://{domain.domain}/patient-profile/{user.id}")
 
             messages.success(request, f'مرحباً {user.username}')
             # Fallback if no tenant found
-            return redirect('home')
+            # user_id not pk because i use this name in path
+            return redirect('patient-profile', user_id=user.id)
         
         else:
             # Handle failed login
@@ -114,9 +115,28 @@ def patient_logout(request):
     logout(request)
     return render(request, 'doctor/home.html')
 
-def patient_profile(request, pk):
+@user_owns_profile
+def patient_profile(request, user_id):
     '''
     the single user appointments
+    get by user_id the patient appointments
     '''
-    context = {'user_id':pk}
+    
+    # prevent non-owner to access tha profile
+    # if request.user.id != user_id and not request.user.is_staff_member:
+    #     # return HttpResponseForbidden("You are not allowed to access this page.")
+    #     #? use http404 for security reasons that not explore that the patient already exist
+    #     raise Http404("Page not found.")
+
+    user = User.objects.get(id=user_id) # get teh patient from his instance in user model by user_id
+    patient = Patient.objects.get(user=user) # get the patient instance itself in patient model
+    appointments = Appointment.objects.filter(patient=patient)
+
+    # i passed the user_id itself to use it in create appointment url
+    context = {'user_id':user_id, 'patient':patient, 'appointments':appointments} # use patient to set his identifier data in profile, and appointment to redirect to appointment details
     return render(request, 'patient/patient_profile.html', context)
+
+
+def appointment_details(request, appoint_id, patient_id):
+    
+    return render(request, 'patient/appointment_details.html')

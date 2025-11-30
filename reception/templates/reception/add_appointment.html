@@ -9,12 +9,19 @@
     <main class="content">
         <section class="section">
             <h2>إضافة موعد جديد للمستخدم {{user.username}}</h2>
-            <form class="card" style="display:grid; gap:16px; max-width:720px;">
+            <form method="post" class="card" style="display:grid; gap:16px; max-width:720px;">
+
+                {{ form.non_field_errors }}
+                
                 <div style="display:grid; gap:12px; grid-template-columns:1fr 1fr;">
+                    {% csrf_token %}
                     {% for field in form %}
                     <div>
                         <label>{{ field.label }}</label>
+                        
                         {{field}}
+                        {{field.errors}}
+                        
                     </div>
                     {% endfor %}
                 </div>

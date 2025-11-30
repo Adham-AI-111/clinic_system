@@ -36,7 +36,11 @@
                     <tbody>
                         {% for appointment in appointments %}
                         <tr>
-                            <td>{{appointment.patient_username}}</td><td>{{appointment.patient_age}}</td><td><span class="pill success">{{appointment.status}}</span></td><td>{{appointment.cost}} ج.م</td><td>2025-11-06</td>
+                            <td>{{appointment.patient.user.username}}</td>
+                            <td>{{appointment.patient_age}}</td>
+                            <td><span class="pill success">{{appointment.status}}</span></td>
+                            <td>{{appointment.cost}} ج.م</td>
+                            <td>{{appointment.date}}</td>
                         </tr>
                         {% endfor %}
                         <!-- <tr>

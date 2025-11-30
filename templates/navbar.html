@@ -3,13 +3,12 @@
         <div class="brand">عيادة الطبيب {{request.tenant.user.username}} </div>
     </div>
     <div class="topbar__center">
-        <form class="search">
-            <input type="search" placeholder="بحث عن مريض..." aria-label="بحث" />
+        <form class="search" action="{% url 'patients-dash' %}">
+            <input name="q" value="{{request.GET.q}}" type="search" placeholder="بحث عن مريض..." aria-label="بحث" />
         </form>
     </div>
     <div class="topbar__right">
-        <span class="today" aria-label="تاريخ اليوم">الخميس، ٦ نوفمبر ٢٠٢٥</span>
+        <span class="today" aria-label="تاريخ اليوم">{{today|date:"j-n-y"}}</span>
         <a class="brand" href="{% url 'staff-logout' %}">logout</a>
     </div>
-    
 </header>
