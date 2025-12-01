@@ -1,6 +1,6 @@
 from django import forms
 from doctor.models import User, Doctor
-from .models import Patient, Appointment
+from .models import Patient, Appointment, Diagnosis, Prescription, Requires
 from doctor.forms import UserSignupForm
 
 # used in concat between user model and patient model
@@ -53,3 +53,63 @@ class PatientSignupForm(UserSignupForm):
         patient.save()
         # TODO: how commit work in view in this case, if type commit=false in view
         return user
+
+
+class CreateDiagnosisForm(forms.ModelForm):
+    class Meta:
+        model = Diagnosis
+        fields = ['diagnosis']
+
+    def __init__(self, *args, **kwargs):
+        # pass appointment to form parameters
+        self.appointment = kwargs.pop('appointment', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        diagnosis = super().save(commit=False)
+
+        diagnosis.appointment = self.appointment
+        if commit:
+            diagnosis.save()
+
+        return diagnosis
+
+
+class CreatePrescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Prescription
+        fields = ['prescription']
+
+    def __init__(self, *args, **kwargs):
+        # pass appointment to form parameters
+        self.appointment = kwargs.pop('appointment', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        prescription = super().save(commit=False)
+
+        prescription.appointment = self.patient
+        if commit:
+            prescription.save()
+
+        return prescription
+
+
+class CreateRequiresForm(forms.ModelForm):
+    class Meta:
+        model = Requires
+        fields = ['requires']
+
+    def __init__(self, *args, **kwargs):
+        # pass appointment in form parameters
+        self.requires = kwargs.pop('appointment', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        requires = super().save(commit=False)
+
+        requires.appointment = self.appointment
+        if commit:
+            requires.save()
+
+        return requires

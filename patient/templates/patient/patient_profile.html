@@ -29,14 +29,16 @@
         <div class="section-header-plain">
             <h2 style="margin:0;">سجل المواعيد</h2>
             <!-- ! i passed the patient id from the patient profile page to this page using "context" in the profile view __in patient app -->
-            <a href="{% url 'create-appointment' user_id %}" class="btn" style="background:var(--primary); color:#fff; border-color:var(--primary);">موعد جديد</a>
+            {% if request.user.is_staff_member %}
+                <a href="{% url 'create-appointment' user_id %}" class="btn" style="background:var(--primary); color:#fff; border-color:var(--primary);">موعد جديد</a>
+            {% endif %}
         </div>
         <!-- ------------------------------------- -->
 
         <div style="display:grid; gap:16px;">
             {% for appoint in appointments %}
             <!-- user_id was passed in context of patient profile as a user model instance id -->
-            <a class="card" href="{% url 'appointment-details' appoint.id user_id %}" style="text-decoration:none; color:inherit; display:block;">
+            <a class="card" href="{% url 'appointment-details' appoint.id  user_id %}" style="text-decoration:none; color:inherit; display:block;">
                 <div style="display:flex; justify-content:space-between; align-items:start; gap:16px;">
                     <div style="flex:1;">
                         <h3 style="margin:0 0 8px;">موعد  {{ appoint.date|date:"j-n-y" }}</h3>

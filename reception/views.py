@@ -23,7 +23,7 @@ def reception_signup(request):
 def create_appointment(request, pk):
     '''
     - will done from user profile
-    - pk is the user id passed from patient profile
+    - pk is the user instance id passed from patient profile
     '''
     user = get_object_or_404(User, id=pk)
     # for link between appointment and the patient in the form
@@ -35,7 +35,6 @@ def create_appointment(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'appointment added successfully')
-            print('added successfully')
             return redirect('dashboard')
         else:
             print('error found')

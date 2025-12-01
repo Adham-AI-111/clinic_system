@@ -55,14 +55,23 @@ class Appointment(models.Model):
 
 class Diagnosis(models.Model):
     diagnosis = models.TextField(max_length=200)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
     def __str__(self):
-        return self.diagnosis[:15]
+        return self.diagnosis[:10]
 
 
-# class Prescription(models.Model):
-#     prescription = models.TextField(max_length=100)
-#     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
-#     created_at = models.DateTimeField(auto_now_add=True)
+class Prescription(models.Model):
+    prescription = models.TextField(max_length=100)
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Requires(models.Model):
+    requires = models.TextField(max_length=100)
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

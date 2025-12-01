@@ -3,7 +3,7 @@ import logging
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from django.http import Http404
@@ -11,7 +11,7 @@ from django.http import Http404
 from common.permissions import staff_required, user_owns_profile
 from doctor.models import Domain, User
 from .models import Appointment, Patient
-from .forms import PatientSignupForm
+from .forms import PatientSignupForm, CreateDiagnosisForm, CreatePrescriptionForm, CreateRequiresForm
 
 
 logger = logging.getLogger(__name__)
@@ -115,6 +115,8 @@ def patient_logout(request):
     logout(request)
     return render(request, 'doctor/home.html')
 
+ 
+# prevent non-owner to access tha profile
 @user_owns_profile
 def patient_profile(request, user_id):
     '''
@@ -122,13 +124,7 @@ def patient_profile(request, user_id):
     get by user_id the patient appointments
     '''
     
-    # prevent non-owner to access tha profile
-    # if request.user.id != user_id and not request.user.is_staff_member:
-    #     # return HttpResponseForbidden("You are not allowed to access this page.")
-    #     #? use http404 for security reasons that not explore that the patient already exist
-    #     raise Http404("Page not found.")
-
-    user = User.objects.get(id=user_id) # get teh patient from his instance in user model by user_id
+    user = User.objects.get(id=user_id) # get the patient instance in user model by user_id
     patient = Patient.objects.get(user=user) # get the patient instance itself in patient model
     appointments = Appointment.objects.filter(patient=patient)
 
@@ -137,6 +133,19 @@ def patient_profile(request, user_id):
     return render(request, 'patient/patient_profile.html', context)
 
 
-def appointment_details(request, appoint_id, patient_id):
-    
-    return render(request, 'patient/appointment_details.html')
+def appointment_details(request, appoint_id, user_id):
+    appointment = get_object_or_404(Appointment, id=appoint_id)
+    diagnosis_form = CreateDiagnosisForm(appointment=appointment)
+    prescription_form = CreatePrescriptionForm(appointment=appointment)
+    requires_form = CreateRequiresForm(appointment=appointment)
+
+    context = {'diagnosis_form':diagnosis_form, 'prescription_form':prescription_form, 'requires_form':requires_form}
+    return render(request, 'patient/appointment_details.html', context)
+
+
+def update_diagnosis(requets):
+    pass
+
+
+def delete_diagnosis(requets):
+    pass

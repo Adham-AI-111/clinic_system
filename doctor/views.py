@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from datetime import timedelta
 import logging
 from django.db.models import F, Q
-from .models import User, Doctor, Domain
+from .models import Domain
 from patient.models import Patient, Appointment
 from common.permissions import staff_required
 
@@ -156,3 +156,6 @@ def appointments_dash(request):
     )
     context = {'appointments':appointments}
     return render(request, 'doctor/appointments_history.html', context)
+
+
+#! is handing forms in appointmnet details will be better here or in patient app
