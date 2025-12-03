@@ -1,17 +1,26 @@
+from audioop import reverse
 from datetime import timedelta
 import logging
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect, render, get_object_or_404
+from django.core.exceptions import ValidationError
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
-from django.http import Http404
 
-from common.permissions import staff_required, user_owns_profile
+from common.permissions import doctor_required, staff_required, user_owns_profile
 from doctor.models import Domain, User
-from .models import Appointment, Patient
-from .forms import PatientSignupForm, CreateDiagnosisForm, CreatePrescriptionForm, CreateRequiresForm
+
+from .forms import (
+    CreateDiagnosisForm,
+    CreatePrescriptionForm,
+    CreateRequiresForm,
+    PatientSignupForm,
+)
+from .models import Appointment, Diagnosis, Patient
 
 
 logger = logging.getLogger(__name__)
@@ -134,18 +143,82 @@ def patient_profile(request, user_id):
 
 
 def appointment_details(request, appoint_id, user_id):
+    user = get_object_or_404(User, id=user_id)
     appointment = get_object_or_404(Appointment, id=appoint_id)
-    diagnosis_form = CreateDiagnosisForm(appointment=appointment)
-    prescription_form = CreatePrescriptionForm(appointment=appointment)
-    requires_form = CreateRequiresForm(appointment=appointment)
+    
+    # prevent user from request onther user appointment by pass user id manaually in the url
+    # http://localhost:8000/patient/appointment-details/2/11/  ->this is the true path
+    # http://localhost:8000/patient/appointment-details/2/7/  -> this is a vain path  11 to 7
+    #? the result is -> data that depends on user id will change but the  data that depends on appoint_id will not change
+    if appointment.patient.user.id != user_id:
+        return HttpResponseForbidden("Invalid URL parameters.")
 
-    context = {'diagnosis_form':diagnosis_form, 'prescription_form':prescription_form, 'requires_form':requires_form}
+    # ------ Get existing diagnosis for this appointment --------
+    try:
+        diagnosis = Diagnosis.objects.get(appointment=appointment)
+        # or if there can be multiple: diagnosis = Diagnosis.objects.filter(appointment=appointment).first()
+    except Diagnosis.DoesNotExist:
+        diagnosis = None
+
+    # ? handle prescription and requirements exits __instaed using try/except
+    # prescription = appointment.prescription if hasattr(appointment, 'prescription') else None
+    # requirements = appointment.requirements if hasattr(appointment, 'requirements') else None
+
+    context = {
+        'user':user,
+        'appointment':appointment,
+        'diagnosis': diagnosis}
     return render(request, 'patient/appointment_details.html', context)
 
 
-def update_diagnosis(requets):
-    pass
+@doctor_required
+def create_diagnosis(request, appoint_id):
+    appoint = Appointment.objects.get(id=appoint_id)
+    
+    # debug the url 
+    try:
+        url = reverse('add-diagnosis', args=[appoint.id])
+    except Exception as e:
+        url = None
+
+    if request.method == 'POST':
+        form = CreateDiagnosisForm(request.POST, appointment=appoint)
+        
+        if form.is_valid():
+            new_diagnosis = form.save()
+            return render(request, 'patient/partials/diagnosis_view.html', {'diagnosis': new_diagnosis})
+        else:
+            # Return form with errors so user can see what's wrong
+            context = {'form': form, 'appointment': appoint}
+            return render(request, 'patient/partials/diagnosis_form.html', context)
+    else:
+        form = CreateDiagnosisForm(appointment=appoint)
+    
+    context = {'form': form, 'appointment': appoint, 'url_path':url}
+    return render(request, 'patient/partials/diagnosis_form.html', context)
 
 
+@doctor_required
+def update_diagnosis(request, diagnosis_id):
+    diagnosis = get_object_or_404(Diagnosis, id=diagnosis_id)
+    
+    # debug the url 
+    try:
+        url = reverse('update-diagnosis', args=[diagnosis.id])
+    except Exception as e:
+        url = None
+
+    if request.method == 'POST':
+        form = CreateDiagnosisForm(request.POST, instance=diagnosis, appointment=diagnosis.appointment)
+        if form.is_valid():
+            updated_diagnosis = form.save()
+            return render(request, 'patient/partials/diagnosis_view.html', {'diagnosis':updated_diagnosis})
+    else:
+        form = CreateDiagnosisForm(instance=diagnosis, appointment=diagnosis.appointment)
+    context = {'form':form, 'url_path':url}
+    return render(request, 'patient/partials/diagnosis_form.html', context)
+
+
+@doctor_required
 def delete_diagnosis(requets):
     pass

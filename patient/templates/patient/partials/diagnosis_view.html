@@ -1,0 +1,12 @@
+<div id="diagnosis-date">
+    <h2 style="margin-top:0;">التشخيص</h2>
+    <p>{{ diagnosis.diagnosis }}</p>
+</div>
+<div>
+    <button
+        hx-get="{% url 'update-diagnosis' diagnosis_id=diagnosis.id %}"
+        hx-target="#diagnosis-card-container"
+        hx-swap="innerHTML"
+        
+    >Update</button>
+</div>

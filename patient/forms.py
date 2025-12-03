@@ -88,7 +88,7 @@ class CreatePrescriptionForm(forms.ModelForm):
     def save(self, commit=True):
         prescription = super().save(commit=False)
 
-        prescription.appointment = self.patient
+        prescription.appointment = self.appointment
         if commit:
             prescription.save()
 
@@ -102,7 +102,7 @@ class CreateRequiresForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         # pass appointment in form parameters
-        self.requires = kwargs.pop('appointment', None)
+        self.appointment = kwargs.pop('appointment', None)
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):

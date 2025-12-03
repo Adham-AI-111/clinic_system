@@ -1,0 +1,26 @@
+<form class="card" style="display:grid; gap:16px; max-width:720px;"
+    hx-post="{{url_path}}"
+    hx-target="#diagnosis-card-container"
+    hx-swap="innerHTML"
+    hx-on="htmx:afterRequest: this.remove()">
+
+    <div style="display:grid; gap:12px; grid-template-columns:1fr 1fr;">
+
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+            <label>{{ field.label }}</label>
+            {{field}}
+            {{field.errors}}
+        </div>
+        {% endfor %}
+        
+        <div style="display:flex; gap:12px;">
+            <button type="submit" class="primary">حفظ الموعد</button>
+            <button type="button" hx-on="click: this.closest('form').remove(); 
+            document.getElementById('add-diagnosis-btn').style.display='block';">Cancel</button>
+        </div>
+
+    </div>
+
+</form>
